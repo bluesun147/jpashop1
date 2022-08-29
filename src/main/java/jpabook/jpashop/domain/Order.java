@@ -24,7 +24,8 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne(mappedBy = "delivery") // 거울
+    @OneToOne
+    @JoinColumn(name = "delivery_id") // 연관관계 주인
     private Delivery delivery;
 
     private LocalDateTime orderDate;
