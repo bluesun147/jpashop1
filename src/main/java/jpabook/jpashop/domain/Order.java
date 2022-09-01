@@ -31,7 +31,7 @@ public class Order {
     private LocalDateTime orderDate;
 
     @Enumerated(EnumType.STRING)
-    private OderStatus status; // 주문 상태 [ORDER, CANCEL]
+    private OrderStatus status; // 주문 상태 [ORDER, CANCEL]
 
     // 연관관계 편의 메서드
     public void setMember(Member member) {
@@ -47,5 +47,44 @@ public class Order {
     public void setDelivery(Delivery delivery) {
         this.delivery = delivery;
         delivery.setOrder(this);
+    }
+
+    // 생성 메서드
+    public static Order createOrder(Member member, Delivery delivery,OrderItem... orderItems) { // ... 은 가변인자(varargs)
+        Order order = new Order();
+        order.setMember(member);
+        order.setDelivery(delivery);
+        for (OrderItem orderItem : orderItems) {
+            order.addOrderItem(orderItem);
+        }
+        order.setStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
+        return order;
+    }
+
+    // == 비지니스 로직 ==
+    // 주문 취소
+    public void cancel() {
+        if (delivery.getStatus() == DeliveryStatus.COMP) { // 배송이 이미 완료되었다면 취소 불가능
+            throw new IllegalStateException("이미 배송 완료된 상품은 취소가 불가능합니다.");
+        }
+        // 통과하면 (배송 완료 안된상태)
+        this.setStatus(OrderStatus.CANCEL);
+        for (OrderItem orderItem : orderItems) { // 강화 for문
+            orderItem.cancel();
+        }
+    }
+
+    // == 조회 로직 ==
+    // 전체 주문 가격 조회
+    public int getTotalPrice() {
+        int totalPrice = 0;
+        for (OrderItem orderItem : orderItems) {
+            totalPrice += orderItem.getTotalPrice();
+        }
+        return totalPrice;
+
+        // 같은 결과. 자바8 스트림..
+        // return orderItems.stream().mapToInt(OrderItem::getTotalPrice).sum();
     }
 }
