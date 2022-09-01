@@ -1,6 +1,8 @@
 package jpabook.jpashop.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,6 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "orders")
 @Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // protected Order() {}
 public class Order {
 
     @Id @GeneratedValue
@@ -21,10 +24,10 @@ public class Order {
     @JoinColumn(name = "member_id") // 매핑을 뭘로 할건지. fk이름이 member_id가 됨.
     private Member member; // 얘를 연관관계 주인. fk쪽을 주인으로.
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL) // order만 persist 하면 밑에것들도 다 한꺼번에.
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL) // order만 persist 하면 밑에것들도(컬렉션에 들어와있는 orderItem) 다 한꺼번에.
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // order가 persist 될 때 delivery 엔티티도 persist 해줌.
     @JoinColumn(name = "delivery_id") // 연관관계 주인
     private Delivery delivery;
 
