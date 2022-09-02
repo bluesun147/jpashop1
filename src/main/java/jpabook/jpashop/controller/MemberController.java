@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -42,5 +43,25 @@ public class MemberController {
 
         memberService.join(member); // 멤버 저장
         return "redirect:/"; // 첫페이지로 리다이렉트
+    }
+
+    /*
+    강조> 폼 객체를 써야 하냐, 엔티티를 직접 써야 하냐?
+    요구사항 매우 단순하면 엔티티 바로 써도 됨.
+    but 실무에서는 일대일 매칭되는 단순한 경우 거의 없음.
+    엔티티를 폼으로 써버리면 엔티티가 지저분해짐. -> 유지보수 어려워 짐.
+    엔티티 최대한 순수하게 유지해야 함. 엔티티는 핵심 비지니스 로직만 갖고 있어야 함. 화면 로직은 x
+    화면에 맞는 api는 폼 객체나 dto 사용해야 함.
+     */
+
+    @GetMapping("/members")
+    public String list(Model model) { // model 객체 통해서 화면에 데이터 전달
+
+        /* 원래는 여기서도 Member 엔티티 아니라 dto로 변환해서 화면에 꼭 필요한 데이터만 출력하는것 권장
+        서버 안에서는 큰 상관 없지만, (템플릿 엔진 사용)
+        api 만들때는 이유불문 절대 엔티티 넘기면 안됨. 엔티티 외부로 반환 x */
+        List<Member> members = memberService.findMembers();
+        model.addAttribute("members", members); // 화면에 넘김
+        return "members/memberList";
     }
 }
