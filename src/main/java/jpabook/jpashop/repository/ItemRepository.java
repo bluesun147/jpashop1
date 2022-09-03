@@ -14,8 +14,8 @@ public class ItemRepository {
 
     public void save(Item item) {
         if (item.getId() == null) { // id가 없으면 저장
-            em.persist(item);
-        } else { // 있으면
+            em.persist(item); // null이면 새로운 오브젝트니까 저장
+        } else { // null 아니면 db에서 수정할 목적으로 불러온 애.
             em.merge(item); // 업데이트랑 비슷..
         }
     }
