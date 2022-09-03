@@ -66,17 +66,24 @@ public class ItemController {
     }
 
     @PostMapping("items/{itemId}/edit") // path variable
-    public String updateItem(@PathVariable String itemId, @ModelAttribute("form") BookForm form) {
-        Book book = new Book();
-        book.setIsbn(form.getIsbn());
-        book.setId(form.getId());
-        book.setName(form.getName());
-        book.setPrice(form.getPrice());
-        book.setStockQuantity(form.getStockQuantity());
-        book.setAuthor(form.getAuthor());
-        book.setIsbn(form.getIsbn());
+    public String updateItem(@PathVariable Long itemId, @ModelAttribute("form") BookForm form) {
 
-        itemService.saveItem(book);
+//        Book book = new Book(); // 준영속 엔티티. jpa가 관리 안함 -> 변경 감지 안함. 값 바꿔도 디비에 업데이트 안됨.
+//        book.setIsbn(form.getIsbn());
+//        book.setId(form.getId());
+//        book.setName(form.getName());
+//        book.setPrice(form.getPrice());
+//        book.setStockQuantity(form.getStockQuantity());
+//        book.setAuthor(form.getAuthor());
+//        book.setIsbn(form.getIsbn());
+//
+//        itemService.saveItem(book);
+
+        // 어설프게 엔티티를 파라미터로 안쓰고 내가 필요한 데이터만 딱딱 받기
+        // 유지보수 훨씬 좋음. 정확히 매칭.
+        // 서비스 계층에 dto 만들어도 됨.
+        itemService.updateItem(itemId, form.getName(), form.getPrice(), form.getStockQuantity());
+
         return "redirect:/items"; // 수정하고 나서 다시 리스트로.
     }
 }

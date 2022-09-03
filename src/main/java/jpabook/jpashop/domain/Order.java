@@ -72,7 +72,7 @@ public class Order {
             throw new IllegalStateException("이미 배송 완료된 상품은 취소가 불가능합니다.");
         }
         // 통과하면 (배송 완료 안된상태)
-        this.setStatus(OrderStatus.CANCEL);
+        this.setStatus(OrderStatus.CANCEL); // 상태 바꾸고 디비에 업데이트 따로 날려준 명령 없음. 바꾸면 알아서 변경 감지. dirty checking
         for (OrderItem orderItem : orderItems) { // 강화 for문
             orderItem.cancel();
         }

@@ -16,7 +16,8 @@ public class ItemRepository {
         if (item.getId() == null) { // id가 없으면 저장
             em.persist(item); // null이면 새로운 오브젝트니까 저장
         } else { // null 아니면 db에서 수정할 목적으로 불러온 애.
-            em.merge(item); // 업데이트랑 비슷..
+            // 업데이트랑 비슷.. -> 되도록 병합 쓰지 말기! 변경 감지 쓰자. 변경 감지는 원하는 속성만 변경할 수 있지만 병합은 모든 속성이 다 변경된
+            em.merge(item);
         }
     }
 
