@@ -5,9 +5,9 @@ spring:
     password:
     driver-class-name: org.h2.Driver
 
-  jpa:
-    hibernate:
-      ddl-auto: create # 앱 실행시 엔티티 다 지우고 다시 생성
+    jpa:
+      hibernate:
+        ddl-auto: none # create: 앱 실행시 엔티티 다 지우고 다시 생성, none: drop하지 않고 게속 사용
     properties:
       hibernate:
 #        show_sql: true # 생성한 sql system out 통해 출력
