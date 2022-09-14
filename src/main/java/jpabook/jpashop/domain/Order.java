@@ -53,7 +53,7 @@ public class Order {
     }
 
     // 생성 메서드
-    public static Order createOrder(Member member, Delivery delivery,OrderItem... orderItems) { // ... 은 가변인자(varargs)
+    public static Order createOrder(Member member, Delivery delivery,OrderItem... orderItems) { // ... 은 가변인자(varargs) 여러개 넣을 수 있음
         Order order = new Order();
         order.setMember(member);
         order.setDelivery(delivery);
