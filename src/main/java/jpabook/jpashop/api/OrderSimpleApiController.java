@@ -43,9 +43,26 @@ public class OrderSimpleApiController {
     }
 
     // 엔티티 아니라 dto 반환
+    // but 성능 문제. 쿼리 너무 많이 나감. N+1 -> 1 + 회원 N + 배송 N
+    // 쿼리 5번 나옴. 로그 확인
+    // lazy 로딩 갯수만큼 반복해야 함.
     @GetMapping("/api/v2/simple-orders")
     public List<SimpleOrderDto> ordersV2() { // 원래는 list로 반환하면 안됨. result 껍데기 객체로 감싸야 함.
         List<Order> orders = orderRepository.findAllByString(new OrderSearch());
+        List<SimpleOrderDto> result = orders.stream()
+                .map(o -> new SimpleOrderDto(o))
+                .collect(Collectors.toList());
+
+        return result;
+    }
+
+    // fetch join 사용 (findAllWithMemberDelivery 확인)
+    // fetch join 완벽히 알아두기!! 실무에서 매우 자주 쓰임
+    // 쿼리 길게 하나 나옴, 로그 확인
+    @GetMapping("api/v3/simple-orders")
+    public List<SimpleOrderDto> orderV3() {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery();
+
         List<SimpleOrderDto> result = orders.stream()
                 .map(o -> new SimpleOrderDto(o))
                 .collect(Collectors.toList());

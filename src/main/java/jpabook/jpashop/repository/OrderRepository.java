@@ -100,6 +100,15 @@ public class OrderRepository {
         return query.getResultList();
     }
 
+    public List<Order> findAllWithMemberDelivery() {
+        // 한번 쿼리로 오더, 멤버, 딜리버리 조인한 다음에 select 절에 다 넣고 한번에 다 땡겨옴.
+        return em.createQuery(
+                "select o from Order o" + // jpql
+                " join fetch o.member m" +  // 지금 order 가져올 때 member 까지 객체 그래프로 한번에 가져옴 (join)
+                " join fetch o.delivery d", Order.class
+        ).getResultList();
+    }
+
     // 실무에선 대신 Querydsl로 처리. 훨씬 간단
 
 }
