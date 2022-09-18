@@ -1,5 +1,6 @@
 package jpabook.jpashop.repository;
 
+import jpabook.jpashop.api.OrderSimpleApiController;
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.Order;
 import lombok.RequiredArgsConstructor;
@@ -102,6 +103,8 @@ public class OrderRepository {
 
     public List<Order> findAllWithMemberDelivery() {
         // 한번 쿼리로 오더, 멤버, 딜리버리 조인한 다음에 select 절에 다 넣고 한번에 다 땡겨옴.
+        // fetch join으로 내가 원하는 것만 select.
+        // 외부 모습 건드리지 않음.
         return em.createQuery(
                 "select o from Order o" + // jpql
                 " join fetch o.member m" +  // 지금 order 가져올 때 member 까지 객체 그래프로 한번에 가져옴 (join)
@@ -109,6 +112,19 @@ public class OrderRepository {
         ).getResultList();
     }
 
-    // 실무에선 대신 Querydsl로 처리. 훨씬 간단
+    public List<OrderSimpleQueryDto> findOrderDtos() {
+        // 얘는 재사용성 없음. 이 dto 쓸때만. sql문 다 짜둠. 코드 지저분
+        // api 스펙에 맞춰짐 (bad) -> 리포지토리 재사용성 떨어짐
+        // v3 보다 성능 조금(미비) 더 최적화. but dto 조회했기 때문에 바꿀수는 없음. 엔티티는 가능
+        // 쓸거면 따로 조회 전용 리포지토리 만들어서 분리해서 쓰기
+        return em.createQuery(
+                // 엔티티 바로 못 넣음
+                "select new jpabook.jpashop.repository.OrderSimpleQueryDto(o.id, m.name, o.orderDate, o.status, d.address) " +
+                        " from Order o" +
+                    " join o.member m" +
+                    " join o.delivery d", OrderSimpleQueryDto.class)
+                .getResultList();
+    }
+
 
 }
