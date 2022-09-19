@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity
 @Table(name = "orders")
 @Getter @Setter
@@ -20,14 +22,14 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) // 모든 연관관계 lazy로 할것, eager로 하면 모두 다 불러옴
+    @ManyToOne(fetch = LAZY) // 모든 연관관계 lazy로 할것, eager로 하면 모두 다 불러옴
     @JoinColumn(name = "member_id") // 매핑을 뭘로 할건지. fk이름이 member_id가 됨.
     private Member member; // 얘를 연관관계 주인. fk쪽을 주인으로.
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL) // order만 persist 하면 밑에것들도(컬렉션에 들어와있는 orderItem) 다 한꺼번에.
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // order가 persist 될 때 delivery 엔티티도 persist 해줌.
+    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL) // order가 persist 될 때 delivery 엔티티도 persist 해줌.
     @JoinColumn(name = "delivery_id") // 연관관계 주인
     private Delivery delivery;
 
