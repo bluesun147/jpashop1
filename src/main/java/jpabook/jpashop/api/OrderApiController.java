@@ -46,6 +46,16 @@ public class OrderApiController {
         return collect;
     }
 
+    // fetch join 활용한 최적화
+    @GetMapping("api/v3/orders")
+    public List<OrderDto> ordersV3() {
+        List<Order> orders = orderRepository.findAllWithItem();
+        List<OrderDto> collect = orders.stream()
+                .map(o -> new OrderDto(o)) // 루프 돌리면서 dto로 변환
+                .collect(Collectors.toList());
+        return collect;
+    }
+
     @Getter
     static class OrderDto {
         private Long orderId;

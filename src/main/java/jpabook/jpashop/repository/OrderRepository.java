@@ -127,4 +127,16 @@ public class OrderRepository {
     }
 
 
+    public List<Order> findAllWithItem() {
+        return em.createQuery( // 실무에선 쿼리dsl 쓰면 쉽게 함.
+                "select distinct o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" +
+                        " join fetch oi.item i", Order.class) // but 1대다 fetch join에서는 페이징 못함.
+                .setFirstResult(1)
+                .setMaxResults(100) // 하이버네이트는 경고 로그 남기면서 모든 데이터 db에서 읽어오고 메모리에서 페이징함.(매우 위험)
+                .getResultList();
+
+    }
 }
