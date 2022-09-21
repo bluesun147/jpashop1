@@ -77,6 +77,7 @@ public class OrderRepository {
         }
         return query.getResultList();
     }
+
     public List<Order> findAllByCriteria(OrderSearch orderSearch) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Order> cq = cb.createQuery(Order.class);
@@ -107,8 +108,8 @@ public class OrderRepository {
         // 외부 모습 건드리지 않음.
         return em.createQuery(
                 "select o from Order o" + // jpql
-                " join fetch o.member m" +  // 지금 order 가져올 때 member 까지 객체 그래프로 한번에 가져옴 (join)
-                " join fetch o.delivery d", Order.class
+                        " join fetch o.member m" +  // 지금 order 가져올 때 member 까지 객체 그래프로 한번에 가져옴 (join)
+                        " join fetch o.delivery d", Order.class
         ).getResultList();
     }
 
@@ -118,25 +119,35 @@ public class OrderRepository {
         // v3 보다 성능 조금(미비) 더 최적화. but dto 조회했기 때문에 바꿀수는 없음. 엔티티는 가능
         // 쓸거면 따로 조회 전용 리포지토리 만들어서 분리해서 쓰기
         return em.createQuery(
-                // 엔티티 바로 못 넣음
-                "select new jpabook.jpashop.repository.OrderSimpleQueryDto(o.id, m.name, o.orderDate, o.status, d.address) " +
-                        " from Order o" +
-                    " join o.member m" +
-                    " join o.delivery d", OrderSimpleQueryDto.class)
+                        // 엔티티 바로 못 넣음
+                        "select new jpabook.jpashop.repository.OrderSimpleQueryDto(o.id, m.name, o.orderDate, o.status, d.address) " +
+                                " from Order o" +
+                                " join o.member m" +
+                                " join o.delivery d", OrderSimpleQueryDto.class)
                 .getResultList();
     }
 
 
     public List<Order> findAllWithItem() {
         return em.createQuery( // 실무에선 쿼리dsl 쓰면 쉽게 함.
-                "select distinct o from Order o" +
-                        " join fetch o.member m" +
-                        " join fetch o.delivery d" +
-                        " join fetch o.orderItems oi" +
-                        " join fetch oi.item i", Order.class) // but 1대다 fetch join에서는 페이징 못함.
+                        "select distinct o from Order o" +
+                                " join fetch o.member m" +
+                                " join fetch o.delivery d" +
+                                " join fetch o.orderItems oi" +
+                                " join fetch oi.item i", Order.class) // but 1대다 fetch join에서는 페이징 못함.
                 .setFirstResult(1)
                 .setMaxResults(100) // 하이버네이트는 경고 로그 남기면서 모든 데이터 db에서 읽어오고 메모리에서 페이징함.(매우 위험)
                 .getResultList();
 
+    }
+
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                        "select o from Order o" + // jpql
+                                " join fetch o.member m" +  // 지금 order 가져올 때 member 까지 객체 그래프로 한번에 가져옴 (join)
+                                " join fetch o.delivery d", Order.class
+                ).setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
     }
 }
