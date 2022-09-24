@@ -39,16 +39,18 @@ public class MemberService {
 
     // 회원 전체 조회
     public List<Member> findMembers() {
-        return memberRepository.findAll();
+        return memberRepository.findAll(); // spring data jpa에 다 만들어져 있음. repository. 찍으면 다 나옴.
     }
 
     public Member findOne(Long memberId) {
-        return memberRepository.findOne(memberId);
+        // return memberRepository.findOne(memberId);
+        return memberRepository.findById(memberId).get(); // spring data jpa. typeorm처럼 find 같은거 이미 다 만들어져 있음
     }
 
     @Transactional // 데이터 변할 일 있으면
     public void update(Long id, String name) {
-        Member member = memberRepository.findOne(id);
+//        Member member = memberRepository.findOne(id);
+        Member member = memberRepository.findById(id).get();
         member.setName(name); // 변경 감지에 의해서
     }
 }

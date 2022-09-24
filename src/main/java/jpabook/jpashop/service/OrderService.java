@@ -29,7 +29,8 @@ public class OrderService {
     public Long order(Long memberId, Long itemId, int count) {
 
         // 엔티티 조회
-        Member member = memberRepository.findOne(memberId); // 해당 멤버 찾기
+//        Member member = memberRepository.findOne(memberId); // 해당 멤버 찾기
+        Member member = memberRepository.findById(memberId).get(); // 해당 멤버 찾기 // 스프링 데이터 jpa
         Item item = itemRepository.findOne(itemId);
 
         // 배송정보 생성

@@ -1,39 +1,18 @@
 package jpabook.jpashop.repository;
 
 import jpabook.jpashop.domain.Member;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
-@Repository
-@RequiredArgsConstructor
-public class MemberRepository {
+// 인터페이스
+// 스프링 데이터 jpa!!
+// typeorm 처럼 save, find 다 있음
+public interface MemberRepository extends JpaRepository<Member, Long> {
 
-//    @PersistenceContext
-    @Autowired
-    private final EntityManager em; // 스프링이 em 만들어서 주입(인젝션)해줌.
+    // 이렇게만 하면 끝!!
+    // 스프링 data jpa 가 알아서 다 만들어 줌.
+    // select m from member m where m.name = ? (jpql)
+    List<Member> findByName(String name);
 
-    public void save(Member member) {
-        em.persist(member); // 이거 하면 jpa가 얘를 저장함.
-    }
-
-    public Member findOne(Long id) {
-        return em.find(Member.class, id); // jpa가 제공하는 메서드 (타입, pk)
-    }
-
-    public List<Member> findAll() {
-        List<Member> result = em.createQuery("select m from Member m", Member.class).getResultList();// jpql, 반환 타입
-
-        return result;
-    }
-
-    public List<Member> findByName(String name) {
-        return em.createQuery("select m from Member m where m.name = :name", Member.class).setParameter("name", name) // 파라미터 바인딩
-                .getResultList();
-    }
 }

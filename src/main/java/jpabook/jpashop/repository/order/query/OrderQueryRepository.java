@@ -39,5 +39,4 @@ public class OrderQueryRepository {
                                 " join o.delivery d", OrderQueryDto.class)
                 .getResultList();
     }
-
 }
